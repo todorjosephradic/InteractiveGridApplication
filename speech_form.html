@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="speech_script.js"></script>
+        <script src="headset_configuration.js"></script>
+        <title>Speech Form</title>
+    </head>
+    <body>
+        <form action="https://www.google.com/search" target="_blank">
+            <input name="query" placeholder="Search" id="query" autofocus>
+            <input type="button" value="Speak" onclick="recognition.start()">  
+        </form>
+    </body>
+</html>

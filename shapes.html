@@ -1,0 +1,1068 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="speechmonitor.js"></script>
+		<title>Interactive Grid Application</title>
+		<style>
+			input[type=button] {
+				width: 100px;
+				height: 50px;
+			}
+		</style>
+	</head>
+<body>
+	<canvas id="canvas" width="317" height="317" style="left:150px;top:20px;position:absolute;z-index:-1">
+		[Fallback Message]
+	</canvas>
+
+	<map name="canvasmap">
+		<area shape="rect" coords="5,5,105,105" alt="SquareTopLeft" style="cursor:pointer" onmouseover="mouseOverSTLTrue()" onmouseout="mouseOverSTLFalse()">
+		<area shape="rect" coords="110,5,210,105" alt="SquareTopMiddle" style="cursor:pointer" onmouseover="mouseOverSTMTrue()" onmouseout="mouseOverSTMFalse()">
+		<area shape="rect" coords="215,5,315,105" alt="SquareTopRight" style="cursor:pointer" onmouseover="mouseOverSTRTrue()" onmouseout="mouseOverSTRFalse()">
+		<area shape="rect" coords="5,110,105,210" alt="SquareMiddleLeft" style="cursor:pointer" onmouseover="mouseOverSMLTrue()" onmouseout="mouseOverSMLFalse()">
+		<area shape="rect" coords="110,110,210,210" alt="SquareMiddleMiddle" style="cursor:pointer" onmouseover="mouseOverSMMTrue()" onmouseout="mouseOverSMMFalse()">
+		<area shape="rect" coords="215,110,315,210" alt="SquareMiddleRight" style="cursor:pointer" onmouseover="mouseOverSMRTrue()" onmouseout="mouseOverSMRFalse()">
+		<area shape="rect" coords="5,215,105,315" alt="SquareBottomLeft" style="cursor:pointer" onmouseover="mouseOverSBLTrue()" onmouseout="mouseOverSBLFalse()">
+		<area shape="rect" coords="110,215,210,315" alt="SquareBottomMiddle" style="cursor:pointer" onmouseover="mouseOverSBMTrue()" onmouseout="mouseOverSBMFalse()">
+		<area shape="rect" coords="215,215,315,315" alt="SquareBottomRight" style="cursor:pointer" onmouseover="mouseOverSBRTrue()" onmouseout="mouseOverSBRFalse()">
+	</map>
+
+	<img src="images/black_square.png" alt="Transparent Square" usemap="#canvasmap" width="315" height="315" style="left:150px;top:20px;position:absolute;opacity:0;z-index:0">
+
+	<script>
+		( function() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				ctx.fillStyle = 'Red'
+				ctx.lineWidth = 2
+				ctx.fillRect(5, 5, 100, 100)
+				ctx.strokeRect(5, 5, 100, 100)
+				ctx.fillRect(110, 5, 100, 100)
+				ctx.strokeRect(110, 5, 100, 100)
+				ctx.fillRect(215, 5, 100, 100)
+				ctx.strokeRect(215, 5, 100, 100)
+				ctx.fillRect(5, 110, 100, 100)
+				ctx.strokeRect(5, 110, 100, 100)
+				ctx.fillRect(110, 110, 100, 100)
+				ctx.strokeRect(110, 110, 100, 100)
+				ctx.fillRect(215, 110, 100, 100)
+				ctx.strokeRect(215, 110, 100, 100)
+				ctx.fillRect(5, 215, 100, 100)
+				ctx.strokeRect(5, 215, 100, 100)
+				ctx.fillRect(110, 215, 100, 100)
+				ctx.strokeRect(110, 215, 100, 100)
+				ctx.fillRect(215, 215, 100, 100)
+				ctx.strokeRect(215, 215, 100, 100)
+			}
+		} ) ()
+	</script>
+	<div class="colorOption" style="display:block"><input type="button" value="Red" style="left:175px;top:350px;position:absolute" onmouseover="mouseOverRedButtonTrue()" onmouseout="mouseOverRedButtonFalse()"></div>
+	<div class="colorOption" style="display:block"><input type="button" value="Orange" style="left:325px;top:350px;position:absolute" onmouseover="mouseOverOrangeButtonTrue()" onmouseout="mouseOverOrangeButtonFalse()"></div>
+	<div class="colorOption" style="display:block"><input type="button" value="Yellow" style="left:175px;top:425px;position:absolute" onmouseover="mouseOverYellowButtonTrue()" onmouseout="mouseOverYellowButtonFalse()"></div>
+	<div class="colorOption" style="display:block"><input type="button" value="Green" style="left:325px;top:425px;position:absolute" onmouseover="mouseOverGreenButtonTrue()" onmouseout="mouseOverGreenButtonFalse()"></div>
+	<div class="colorOption" style="display:block"><input type="button" value="Brown" style="left:175px;top:500px;position:absolute" onmouseover="mouseOverBrownButtonTrue()" onmouseout="mouseOverBrownButtonFalse()"></div>
+	<div class="colorOption" style="display:block"><input type="button" value="Pink" style="left:325px;top:500px;position:absolute" onmouseover="mouseOverPinkButtonTrue()" onmouseout="mouseOverPinkButtonFalse()"></div>
+	<div class="colorOption" style="display:block"><input type="button" value="Purple" style="left:250px;top:575px;position:absolute" onmouseover="mouseOverPurpleButtonTrue()" onmouseout="mouseOverPurpleButtonFalse()"></div>
+	
+	<input id="gameButton" type="button" value="Start Game" style="left:625px;top:425px;position:absolute" onmouseover="mouseOverGameButtonTrue()" onmouseout="mouseOverGameButtonFalse()">
+	<div id="quitButton" style="display:none"><input type="button" value="Quit Game" style="left:625px;top:500px;position:absolute" onmouseover="mouseOverQuitButtonTrue()" onmouseout="mouseOverQuitButtonFalse()"></div>
+	
+	<div id="stlGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Top Left X" width="96" height="96" style="left:157px;top:27px;position:absolute;z-index:1"></div>
+	<div id="stlGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Top Left O" width="96" height="96" style="left:157px;top:27px;position:absolute;z-index:2"></div>
+	
+	<div id="stmGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Top Middle X" width="96" height="96" style="left:262px;top:27px;position:absolute;z-index:1"></div>
+	<div id="stmGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Top Middle O" width="96" height="96" style="left:262px;top:27px;position:absolute;z-index:2"></div>
+	
+	<div id="strGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Top Right X" width="96" height="96" style="left:367px;top:27px;position:absolute;z-index:1"></div>
+	<div id="strGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Top Right O" width="96" height="96" style="left:367px;top:27px;position:absolute;z-index:2"></div>
+	
+	<div id="smlGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Middle Left X" width="96" height="96" style="left:157px;top:132px;position:absolute;z-index:1"></div>
+	<div id="smlGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Middle Left O" width="96" height="96" style="left:157px;top:132px;position:absolute;z-index:2"></div>
+	
+	<div id="smmGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Middle Middle X" width="96" height="96" style="left:262px;top:132px;position:absolute;z-index:1"></div>
+	<div id="smmGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Middle Middle O" width="96" height="96" style="left:262px;top:132px;position:absolute;z-index:2"></div>
+	
+	<div id="smrGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Middle Right X" width="96" height="96" style="left:367px;top:132px;position:absolute;z-index:1"></div>
+	<div id="smrGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Middle Right O" width="96" height="96" style="left:367px;top:132px;position:absolute;z-index:2"></div>
+	
+	<div id="sblGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Bottom Left X" width="96" height="96" style="left:157px;top:237px;position:absolute;z-index:1"></div>
+	<div id="sblGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Bottom Left O" width="96" height="96" style="left:157px;top:237px;position:absolute;z-index:2"></div>
+	
+	<div id="sbmGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Bottom Middle X" width="96" height="96" style="left:262px;top:237px;position:absolute;z-index:1"></div>
+	<div id="sbmGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Bottom Middle O" width="96" height="96" style="left:262px;top:237px;position:absolute;z-index:2"></div>
+	
+	<div id="sbrGameBoardX" class="gameBoard" style="display:none"><img src="images/x_symbol.png" alt="Bottom Right X" width="96" height="96" style="left:367px;top:237px;position:absolute;z-index:1"></div>
+	<div id="sbrGameBoardO" class="gameBoard" style="display:none"><img src="images/o_symbol.png" alt="Bottom Right O" width="96" height="96" style="left:367px;top:237px;position:absolute;z-index:2"></div>
+	
+	<div id="playerTurn" style="left:500px;top:175px;position:absolute;display:none"><input id="playerTurnText" type="text" value="" readonly></div>
+	<script>
+		var gameState = 'colorGrid'
+		
+		var squareTopLeftSelected = false
+		var squareTopMiddleSelected = false
+		var squareTopRightSelected = false
+		var squareMiddleLeftSelected = false
+		var squareMiddleMiddleSelected = false
+		var squareMiddleRightSelected = false
+		var squareBottomLeftSelected = false
+		var squareBottomMiddleSelected = false
+		var squareBottomRightSelected = false
+
+		var squareTopLeftCurrentColor = 'Red'
+		var squareTopMiddleCurrentColor = 'Red'
+		var squareTopRightCurrentColor = 'Red'
+		var squareMiddleLeftCurrentColor = 'Red'
+		var squareMiddleMiddleCurrentColor = 'Red'
+		var squareMiddleRightCurrentColor = 'Red'
+		var squareBottomLeftCurrentColor = 'Red'
+		var squareBottomMiddleCurrentColor = 'Red'
+		var squareBottomRightCurrentColor = 'Red'
+
+		var mouseOverSTL = false
+		var mouseOverSTM = false
+		var mouseOverSTR = false
+		var mouseOverSML = false
+		var mouseOverSMM = false
+		var mouseOverSMR = false
+		var mouseOverSBL = false
+		var mouseOverSBM = false
+		var mouseOverSBR = false
+		var mouseOverRedButton = false
+		var mouseOverOrangeButton = false
+		var mouseOverYellowButton = false
+		var mouseOverGreenButton = false
+		var mouseOverBrownButton = false
+		var mouseOverPinkButton = false
+		var mouseOverPurpleButton = false
+		var mouseOverGameButton = false
+		var mouseOverQuitButton = false
+
+		var stlGBX = document.getElementById('stlGameBoardX').style.display
+		var stlGBO = document.getElementById('stlGameBoardO').style.display
+
+		var stmGBX = document.getElementById('stmGameBoardX').style.display
+		var stmGBO = document.getElementById('stmGameBoardO').style.display
+
+		var strGBX = document.getElementById('strGameBoardX').style.display
+		var strGBO = document.getElementById('strGameBoardO').style.display
+
+		var smlGBX = document.getElementById('smlGameBoardX').style.display
+		var smlGBO = document.getElementById('smlGameBoardO').style.display
+
+		var smmGBX = document.getElementById('smmGameBoardX').style.display
+		var smmGBO = document.getElementById('smmGameBoardO').style.display
+
+		var smrGBX = document.getElementById('smrGameBoardX').style.display
+		var smrGBO = document.getElementById('smrGameBoardO').style.display
+
+		var sblGBX = document.getElementById('sblGameBoardX').style.display
+		var sblGBO = document.getElementById('sblGameBoardO').style.display
+
+		var sbmGBX = document.getElementById('sbmGameBoardX').style.display
+		var sbmGBO = document.getElementById('sbmGameBoardO').style.display
+
+		var sbrGBX = document.getElementById('sbrGameBoardX').style.display
+		var sbrGBO = document.getElementById('sbrGameBoardO').style.display
+
+		var colorOptions = document.getElementsByClassName('colorOption')
+		var gameBoardSquares = document.getElementsByClassName('gameBoard')
+		var playerState = ''
+
+		var crossesWon = false
+		var noughtsWon = false
+
+		var chosenColor = 'Red'
+
+		function isSquareTopLeftSelected(gameState) {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareTopLeftSelected == false) {
+						squareTopLeftSelected = true
+						ctx.clearRect(3, 3, 102, 102)
+						ctx.fillStyle = squareTopLeftCurrentColor
+						ctx.fillRect(5, 5, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(5, 5, 100, 100)
+					}
+					else {
+						squareTopLeftSelected = false
+						ctx.clearRect(3, 3, 102, 102)
+						ctx.fillStyle = squareTopLeftCurrentColor
+						ctx.fillRect(5, 5, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(5, 5, 100, 100)
+					}
+				}
+				else {
+					if (squareTopLeftSelected == false) {
+						squareTopLeftSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('stlGameBoardX').style.display = 'block'
+							stlGBX = document.getElementById('stlGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn."
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState == 'crosses'
+							document.getElementById('stlGameBoardO').style.display = 'block'
+							stlGBO = document.getElementById('stlGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn."
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+		
+		function isSquareTopMiddleSelected() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareTopMiddleSelected == false) {
+						squareTopMiddleSelected = true
+						ctx.clearRect(108, 3, 102, 102)
+						ctx.fillStyle = squareTopMiddleCurrentColor
+						ctx.fillRect(110, 5, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(110, 5, 100, 100)
+					}
+					else {
+						squareTopMiddleSelected = false
+						ctx.clearRect(108, 3, 102, 102)
+						ctx.fillStyle = squareTopMiddleCurrentColor
+						ctx.fillRect(110, 5, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(110, 5, 100, 100)
+					}
+				}
+				else {
+					if (squareTopMiddleSelected == false) {
+						squareTopMiddleSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('stmGameBoardX').style.display = 'block'
+							stmGBX = document.getElementById('stmGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn."
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState = 'crosses'
+							document.getElementById('stmGameBoardO').style.display = 'block'
+							stmGBO = document.getElementById('stmGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn."
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+
+		function isSquareTopRightSelected() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareTopRightSelected == false) {
+						squareTopRightSelected = true
+						ctx.clearRect(213, 3, 102, 102)
+						ctx.fillStyle = squareTopRightCurrentColor
+						ctx.fillRect(215, 5, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(215, 5, 100, 100)
+					}
+					else {
+						squareTopRightSelected = false
+						ctx.clearRect(213, 3, 102, 102)
+						ctx.fillStyle = squareTopRightCurrentColor
+						ctx.fillRect(215, 5, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(215, 5, 100, 100)
+					}
+				}
+				else {
+					if (squareTopRightSelected == false) {
+						squareTopRightSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('strGameBoardX').style.display = 'block'
+							strGBX = document.getElementById('strGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn."
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState = 'crosses'
+							document.getElementById('strGameBoardO').style.display = 'block'
+							strGBO = document.getElementById('strGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn."
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+
+		function isSquareMiddleLeftSelected() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareMiddleLeftSelected == false) {
+						squareMiddleLeftSelected = true
+						ctx.clearRect(3, 108, 102, 102)
+						ctx.fillStyle = squareMiddleLeftCurrentColor
+						ctx.fillRect(5, 110, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(5, 110, 100, 100)
+					}
+					else {
+						squareMiddleLeftSelected = false
+						ctx.clearRect(3, 108, 102, 102)
+						ctx.fillStyle = squareMiddleLeftCurrentColor
+						ctx.fillRect(5, 110, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(5, 110, 100, 100)
+					}
+				}
+				else {
+					if (squareMiddleLeftSelected == false) {
+						squareMiddleLeftSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('smlGameBoardX').style.display = 'block'
+							smlGBX = document.getElementById('smlGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn"
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState = 'crosses'
+							document.getElementById('smlGameBoardO').style.display = 'block'
+							smlGBO = document.getElementById('smlGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn"
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+
+		function isSquareMiddleMiddleSelected() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareMiddleMiddleSelected == false) {
+						squareMiddleMiddleSelected = true
+						ctx.clearRect(108, 108, 102, 102)
+						ctx.fillStyle = squareMiddleMiddleCurrentColor
+						ctx.fillRect(110, 110, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(110, 110, 100, 100)
+					}
+					else {
+						squareMiddleMiddleSelected = false
+						ctx.clearRect(108, 108, 102, 102)
+						ctx.fillStyle = squareMiddleMiddleCurrentColor
+						ctx.fillRect(110, 110, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(110, 110, 100, 100)
+					}
+				}
+				else {
+					if (squareMiddleMiddleSelected == false) {
+						squareMiddleMiddleSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('smmGameBoardX').style.display = 'block'
+							smmGBX = document.getElementById('smmGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn."
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState = 'crosses'
+							document.getElementById('smmGameBoardO').style.display = 'block'
+							smmGBO = document.getElementById('smmGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn."
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+
+		function isSquareMiddleRightSelected() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareMiddleRightSelected == false) {
+						squareMiddleRightSelected = true
+						ctx.clearRect(213, 108, 102, 102)
+						ctx.fillStyle = squareMiddleRightCurrentColor
+						ctx.fillRect(215, 110, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(215, 110, 100, 100)
+					}
+					else {
+						squareMiddleRightSelected = false
+						ctx.clearRect(213, 108, 102, 102)
+						ctx.fillStyle = squareMiddleRightCurrentColor
+						ctx.fillRect(215, 110, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(215, 110, 100, 100)
+					}
+				}
+				else {
+					if (squareMiddleRightSelected == false) {
+						squareMiddleRightSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('smrGameBoardX').style.display = 'block'
+							smrGBX = document.getElementById('smrGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn."
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState = 'crosses'
+							document.getElementById('smrGameBoardO').style.display = 'block'
+							smrGBO = document.getElementById('smrGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn."
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+
+		function isSquareBottomLeftSelected() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareBottomLeftSelected == false) {
+						squareBottomLeftSelected = true
+						ctx.clearRect(3, 213, 102, 102)
+						ctx.fillStyle = squareBottomLeftCurrentColor
+						ctx.fillRect(5, 215, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(5, 215, 100, 100)
+					}
+					else {
+						squareBottomLeftSelected = false
+						ctx.clearRect(3, 213, 102, 102)
+						ctx.fillStyle = squareBottomLeftCurrentColor
+						ctx.fillRect(5, 215, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(5, 215, 100, 100)
+					}
+				}
+				else {
+					if (squareBottomLeftSelected == false) {
+						squareBottomLeftSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('sblGameBoardX').style.display = 'block'
+							sblGBX = document.getElementById('sblGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn."
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState = 'crosses'
+							document.getElementById('sblGameBoardO').style.display = 'block'
+							sblGBO = document.getElementById('sblGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn."
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+
+		function isSquareBottomMiddleSelected() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareBottomMiddleSelected == false) {
+						squareBottomMiddleSelected = true
+						ctx.clearRect(108, 213, 102, 102)
+						ctx.fillStyle = squareBottomMiddleCurrentColor
+						ctx.fillRect(110, 215, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(110, 215, 100, 100)
+					}
+					else {
+						squareBottomMiddleSelected = false
+						ctx.clearRect(108, 213, 102, 102)
+						ctx.fillStyle = squareBottomMiddleCurrentColor
+						ctx.fillRect(110, 215, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(110, 215, 100, 100)
+					}
+				}
+				else {
+					if (squareBottomMiddleSelected == false) {
+						squareBottomMiddleSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('sbmGameBoardX').style.display = 'block'
+							sbmGBX = document.getElementById('sbmGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn."
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState = 'crosses'
+							document.getElementById('sbmGameBoardO').style.display = 'block'
+							sbmGBO = document.getElementById('sbmGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn."
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+
+		function isSquareBottomRightSelected() {
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				if (gameState == 'colorGrid') {
+					if (squareBottomRightSelected == false) {
+						squareBottomRightSelected = true
+						ctx.clearRect(213, 213, 102, 102)
+						ctx.fillStyle = squareBottomRightCurrentColor
+						ctx.fillRect(215, 215, 100, 100)
+						ctx.strokeStyle = 'Blue'
+						ctx.strokeRect(215, 215, 100, 100)
+					}
+					else {
+						squareBottomRightSelected = false
+						ctx.clearRect(213, 213, 102, 102)
+						ctx.fillStyle = squareBottomRightCurrentColor
+						ctx.fillRect(215, 215, 100, 100)
+						ctx.strokeStyle = 'Black'
+						ctx.strokeRect(215, 215, 100, 100)
+					}
+				}
+				else {
+					if (squareBottomRightSelected == false) {
+						squareBottomRightSelected = true
+						if (playerState == 'none') {
+							alert('The game is now finished. Click the restart button to play again.')
+						}
+						else if (playerState == 'crosses') {
+							playerState = 'noughts'
+							document.getElementById('sbrGameBoardX').style.display = 'block'
+							sbrGBX = document.getElementById('sbrGameBoardX').style.display
+							document.getElementById('playerTurnText').value = "Noughts player's turn."
+							checkIfDraw()
+							checkIfCrossesWon()
+						}
+						else {
+							playerState = 'crosses'
+							document.getElementById('sbrGameBoardO').style.display = 'block'
+							sbrGBO = document.getElementById('sbrGameBoardO').style.display
+							document.getElementById('playerTurnText').value = "Crosses player's turn."
+							checkIfDraw()
+							checkIfNoughtsWon()
+						}
+					}
+					else {
+						alert('This square has already been allocated a symbol. Thereforce, it cannot be overwritten.')
+					}
+				}
+			}
+		}
+
+		function updateSelectedSquares() {
+			if (squareTopLeftSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareTopLeftSelected = false
+					squareTopLeftCurrentColor = chosenColor
+					ctx.clearRect(3, 3, 102, 102)
+					ctx.fillStyle = squareTopLeftCurrentColor
+					ctx.fillRect(5, 5, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(5, 5, 100, 100)
+				}
+			}
+
+			if (squareTopMiddleSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareTopMiddleSelected = false
+					squareTopMiddleCurrentColor = chosenColor
+					ctx.clearRect(108, 3, 102, 102)
+					ctx.fillStyle = squareTopMiddleCurrentColor
+					ctx.fillRect(110, 5, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(110, 5, 100, 100)
+				}
+			}
+
+			if (squareTopRightSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareTopRightSelected = false
+					squareTopRightCurrentColor = chosenColor
+					ctx.clearRect(213, 3, 102, 102)
+					ctx.fillStyle = squareTopRightCurrentColor
+					ctx.fillRect(215, 5, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(215, 5, 100, 100)
+				}
+			}
+
+			if (squareMiddleLeftSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareMiddleLeftSelected = false
+					squareMiddleLeftCurrentColor = chosenColor
+					ctx.clearRect(3, 108, 102, 102)
+					ctx.fillStyle = squareMiddleLeftCurrentColor
+					ctx.fillRect(5, 110, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(5, 110, 100, 100)
+				}
+			}
+
+			if (squareMiddleMiddleSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareMiddleMiddleSelected = false
+					squareMiddleMiddleCurrentColor = chosenColor
+					ctx.clearRect(108, 108, 102, 102)
+					ctx.fillStyle = squareMiddleMiddleCurrentColor
+					ctx.fillRect(110, 110, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(110, 110, 100, 100)
+				}
+			}
+
+			if (squareMiddleRightSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareMiddleRightSelected = false
+					squareMiddleRightCurrentColor = chosenColor
+					ctx.clearRect(213, 108, 102, 102)
+					ctx.fillStyle = squareMiddleRightCurrentColor
+					ctx.fillRect(215, 110, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(215, 110, 100, 100)
+				}
+			}
+
+			if (squareBottomLeftSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareBottomLeftSelected = false
+					squareBottomLeftCurrentColor = chosenColor
+					ctx.clearRect(3, 213, 102, 102)
+					ctx.fillStyle = squareBottomLeftCurrentColor
+					ctx.fillRect(5, 215, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(5, 215, 100, 100)
+				}
+			}
+
+			if (squareBottomMiddleSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareBottomMiddleSelected = false
+					squareBottomMiddleCurrentColor = chosenColor
+					ctx.clearRect(108, 213, 102, 102)
+					ctx.fillStyle = squareBottomMiddleCurrentColor
+					ctx.fillRect(110, 215, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(110, 215, 100, 100)
+				}
+			}
+
+			if (squareBottomRightSelected == true) {
+				const canvas = document.getElementById('canvas')
+				if (canvas.getContext) {
+					const ctx = canvas.getContext('2d')
+					squareBottomRightSelected = false
+					squareBottomRightCurrentColor = chosenColor
+					ctx.clearRect(213, 213, 102, 102)
+					ctx.fillStyle = squareBottomRightCurrentColor
+					ctx.fillRect(215, 215, 100, 100)
+					ctx.strokeStyle = 'Black'
+					ctx.strokeRect(215, 215, 100, 100)
+				}
+			}
+		}
+
+		function startGame() {
+			gameState = 'gameGrid'
+			playerState = 'crosses'
+			document.getElementById('gameButton').value = 'Restart'
+			document.getElementById('quitButton').style.display = 'block'
+			document.getElementById('playerTurn').style.display = 'block'
+			document.getElementById('playerTurnText').value = "Crosses player's turn"
+			squareTopLeftSelected = false
+			squareTopMiddleSelected = false
+			squareTopRightSelected = false
+			squareMiddleLeftSelected = false
+			squareMiddleMiddleSelected = false
+			squareMiddleRightSelected = false
+			squareBottomLeftSelected = false
+			squareBottomMiddleSelected = false
+			squareBottomRightSelected = false
+			stlGBX = 'none'
+			stlGBO = 'none'
+			stmGBX = 'none'
+			stmGBO = 'none'
+			strGBX = 'none'
+			strGBO = 'none'
+			smlGBX = 'none'
+			smlGBO = 'none'
+			smmGBX = 'none'
+			smmGBO = 'none'
+			smrGBX = 'none'
+			smrGBO = 'none'
+			sblGBX = 'none'
+			sblGBO = 'none'
+			sbmGBX = 'none'
+			sbmGBO = 'none'
+			sbrGBX = 'none'
+			sbrGBO = 'none'
+
+			for (var i = 0; i < colorOptions.length; i++) {
+				colorOptions[i].style.display = 'none'
+			}
+			for (var i = 0; i < gameBoardSquares.length; i++) {
+				gameBoardSquares[i].style.display = 'none'
+			}
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				ctx.clearRect(0, 0, 350, 350)
+				ctx.fillStyle = 'White'
+				ctx.strokeStyle = 'Black'
+				ctx.lineWidth = 2
+				ctx.fillRect(5, 5, 100, 100)
+				ctx.strokeRect(5, 5, 100, 100)
+				ctx.fillRect(110, 5, 100, 100)
+				ctx.strokeRect(110, 5, 100, 100)
+				ctx.fillRect(215, 5, 100, 100)
+				ctx.strokeRect(215, 5, 100, 100)
+				ctx.fillRect(5, 110, 100, 100)
+				ctx.strokeRect(5, 110, 100, 100)
+				ctx.fillRect(110, 110, 100, 100)
+				ctx.strokeRect(110, 110, 100, 100)
+				ctx.fillRect(215, 110, 100, 100)
+				ctx.strokeRect(215, 110, 100, 100)
+				ctx.fillRect(5, 215, 100, 100)
+				ctx.strokeRect(5, 215, 100, 100)
+				ctx.fillRect(110, 215, 100, 100)
+				ctx.strokeRect(110, 215, 100, 100)
+				ctx.fillRect(215, 215, 100, 100)
+				ctx.strokeRect(215, 215, 100, 100)
+			}
+		}
+
+		function checkIfDraw() {
+			if ((squareTopLeftSelected == true) && (squareTopMiddleSelected == true) && (squareTopRightSelected == true) && (squareMiddleLeftSelected == true) && (squareMiddleMiddleSelected == true) && (squareMiddleRightSelected == true) && (squareBottomLeftSelected == true) && (squareBottomMiddleSelected == true) && (squareMiddleRightSelected == true)) {
+				playerState = 'none'
+				document.getElementById('playerTurnText').value = "Game has ended in a draw."
+			}
+		}
+
+		function checkIfCrossesWon() {
+			if ((stlGBX == 'block' && stmGBX == 'block' && strGBX == 'block') || (smlGBX == 'block' && smmGBX == 'block' && smrGBX == 'block') || (sblGBX == 'block' && sbmGBX == 'block' && sbrGBX == 'block') || (stlGBX == 'block' && smlGBX == 'block' && sblGBX == 'block') || (stmGBX == 'block' && smmGBX == 'block' && sbmGBX == 'block') || (strGBX == 'block' && smrGBX == 'block' && sbrGBX == 'block') || (stlGBX == 'block' && smmGBX == 'block' && sbrGBX == 'block') || (strGBX == 'block' && smmGBX == 'block' && sblGBX == 'block')) {
+				crossesWon = true
+				playerState = 'none'
+				document.getElementById('playerTurnText').value = "Crosses player has won."
+			}
+		}
+
+		function checkIfNoughtsWon() {
+			if ((stlGBO == 'block' && stmGBO == 'block' && strGBO == 'block') || (smlGBO == 'block' && smmGBO == 'block' && smrGBO == 'block') || (sblGBO == 'block' && sbmGBO == 'block' && sbrGBO == 'block') || (stlGBO == 'block' && smlGBO == 'block' && sblGBO == 'block') || (stmGBO == 'block' && smmGBO == 'block' && sbmGBO == 'block') || (strGBO == 'block' && smrGBO == 'block' && sbrGBO == 'block') || (stlGBO == 'block' && smmGBO == 'block' && sbrGBO == 'block') || (strGBO == 'block' && smmGBO == 'block' && sblGBO == 'block')) {
+				noughtsWon = true
+				playerState = 'none'
+				document.getElementById('playerTurnText').value = "Noughts player has won."
+			}
+		}
+
+		function quitGame() {
+			gameState = 'colorGrid'
+			document.getElementById('gameButton').value = 'Start Game'
+			document.getElementById('quitButton').style.display = 'none'
+			document.getElementById('playerTurn').style.display = 'none'
+			squareTopLeftSelected = false
+			squareTopMiddleSelected = false
+			squareTopRightSelected = false
+			squareMiddleLeftSelected = false
+			squareMiddleMiddleSelected = false
+			squareMiddleRightSelected = false
+			squareBottomLeftSelected = false
+			squareBottomMiddleSelected = false
+			squareBottomRightSelected = false
+			stlGBX = 'none'
+			stlGBO = 'none'
+			stmGBX = 'none'
+			stmGBO = 'none'
+			strGBX = 'none'
+			strGBO = 'none'
+			smlGBX = 'none'
+			smlGBO = 'none'
+			smmGBX = 'none'
+			smmGBO = 'none'
+			smrGBX = 'none'
+			smrGBO = 'none'
+			sblGBX = 'none'
+			sblGBO = 'none'
+			sbmGBX = 'none'
+			sbmGBO = 'none'
+			sbrGBX = 'none'
+			sbrGBO = 'none'
+
+			for (var i = 0; i < colorOptions.length; i++) {
+				colorOptions[i].style.display = 'block'
+			}
+			for (var i = 0; i < gameBoardSquares.length; i++) {
+				gameBoardSquares[i].style.display = 'none'
+			}
+			const canvas = document.getElementById('canvas')
+			if (canvas.getContext) {
+				const ctx = canvas.getContext('2d')
+				ctx.clearRect(0, 0, 350, 350)
+				ctx.fillStyle = 'Red'
+				ctx.strokeStyle = 'Black'
+				ctx.lineWidth = 2
+				ctx.fillRect(5, 5, 100, 100)
+				ctx.strokeRect(5, 5, 100, 100)
+				ctx.fillRect(110, 5, 100, 100)
+				ctx.strokeRect(110, 5, 100, 100)
+				ctx.fillRect(215, 5, 100, 100)
+				ctx.strokeRect(215, 5, 100, 100)
+				ctx.fillRect(5, 110, 100, 100)
+				ctx.strokeRect(5, 110, 100, 100)
+				ctx.fillRect(110, 110, 100, 100)
+				ctx.strokeRect(110, 110, 100, 100)
+				ctx.fillRect(215, 110, 100, 100)
+				ctx.strokeRect(215, 110, 100, 100)
+				ctx.fillRect(5, 215, 100, 100)
+				ctx.strokeRect(5, 215, 100, 100)
+				ctx.fillRect(110, 215, 100, 100)
+				ctx.strokeRect(110, 215, 100, 100)
+				ctx.fillRect(215, 215, 100, 100)
+				ctx.strokeRect(215, 215, 100, 100)
+			}
+		}
+
+		function mouseOverSTLTrue() {
+			mouseOverSTL = true
+		}
+		function mouseOverSTLFalse() {
+			mouseOverSTL = false
+		}
+
+		function mouseOverSTMTrue() {
+			mouseOverSTM = true
+		}
+		function mouseOverSTMFalse() {
+			mouseOverSTM = false
+		}
+
+		function mouseOverSTRTrue() {
+			mouseOverSTR = true
+		}
+		function mouseOverSTRFalse() {
+			mouseOverSTR = false
+		}
+
+		function mouseOverSMLTrue() {
+			mouseOverSML = true
+		}
+		function mouseOverSMLFalse() {
+			mouseOverSML = false
+		}
+
+		function mouseOverSMMTrue() {
+			mouseOverSMM = true
+		}
+		function mouseOverSMMFalse() {
+			mouseOverSMM = false
+		}
+
+		function mouseOverSMRTrue() {
+			mouseOverSMR = true
+		}
+		function mouseOverSMRFalse() {
+			mouseOverSMR = false
+		}
+
+		function mouseOverSBLTrue() {
+			mouseOverSBL = true
+		}
+		function mouseOverSBLFalse() {
+			mouseOverSBL = false
+		}
+
+		function mouseOverSBMTrue() {
+			mouseOverSBM = true
+		}
+		function mouseOverSBMFalse() {
+			mouseOverSBM = false
+		}
+
+		function mouseOverSBRTrue() {
+			mouseOverSBR = true
+		}
+		function mouseOverSBRFalse() {
+			mouseOverSBR = false
+		}
+
+		function mouseOverSelectTrue() {
+			mouseOverSelect = true
+		}
+		function mouseOverSelectFalse() {
+			mouseOverSelect = false
+		}
+
+		function mouseOverRedButtonTrue() {
+			mouseOverRedButton = true
+		}
+		function mouseOverRedButtonFalse() {
+			mouseOverRedButton = false
+		}
+
+		function mouseOverOrangeButtonTrue() {
+			mouseOverOrangeButton = true
+		}
+		function mouseOverOrangeButtonFalse() {
+			mouseOverOrangeButton = false
+		}
+
+		function mouseOverYellowButtonTrue() {
+			mouseOverYellowButton = true
+		}
+		function mouseOverYellowButtonFalse() {
+			mouseOverYellowButton = false
+		}
+
+		function mouseOverGreenButtonTrue() {
+			mouseOverGreenButton = true
+		}
+		function mouseOverGreenButtonFalse() {
+			mouseOverGreenButton = false
+		}
+
+		function mouseOverBrownButtonTrue() {
+			mouseOverBrownButton = true
+		}
+		function mouseOverBrownButtonFalse() {
+			mouseOverBrownButton = false
+		}
+
+		function mouseOverPinkButtonTrue() {
+			mouseOverPinkButton = true
+		}
+		function mouseOverPinkButtonFalse() {
+			mouseOverPinkButton = false
+		}
+
+		function mouseOverPurpleButtonTrue() {
+			mouseOverPurpleButton = true
+		}
+		function mouseOverPurpleButtonFalse() {
+			mouseOverPurpleButton = false
+		}
+
+		function mouseOverGameButtonTrue() {
+			mouseOverGameButton = true
+		}
+		function mouseOverGameButtonFalse() {
+			mouseOverGameButton = false
+		}
+
+		function mouseOverQuitButtonTrue() {
+			mouseOverQuitButton = true
+		}
+		function mouseOverQuitButtonFalse() {
+			mouseOverQuitButton = false
+		}
+	</script>
+</body>
+</html>
