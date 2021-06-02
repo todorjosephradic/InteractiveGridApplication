@@ -1,6 +1,6 @@
 # InteractiveGridApplication
 
-# The Interactive Grid Application is designed and intended for use by people who cannot use their hands or have hand-based disabilities. But it can also be used by people without
+# The Interactive Grid Application is designed to be run using Google Chrome and is intended for use by people who cannot use their hands or have hand-based disabilities. But it can also be used by people without
 # hand-based disabilities.
 
 # The application uses Camera Mouse software for head-position-tracking to map the user's head movement to the movement of the cursor. Voice command input is used to perform the
